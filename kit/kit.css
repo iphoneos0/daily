@@ -1,0 +1,74 @@
+/* kit.css：每款小游戏共用的页面样式 */
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--k-bg, #111); }
+body {
+  position: fixed; inset: 0;
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent; overscroll-behavior: none;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  color: #fff;
+}
+.k-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+.k-ui { position: fixed; inset: 0; pointer-events: none; }
+.k-btn {
+  pointer-events: auto; border: 0; cursor: pointer; font: inherit; color: #fff; text-decoration: none;
+  background: rgba(255, 255, 255, .14); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+}
+.k-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.k-home, .k-mute { position: absolute; top: calc(env(safe-area-inset-top) + 10px); height: 38px; border-radius: 19px; }
+.k-home { left: calc(env(safe-area-inset-left) + 10px); padding: 0 14px 0 10px; font-size: 14px; font-weight: 600; }
+.k-mute { right: calc(env(safe-area-inset-right) + 10px); width: 38px; }
+body[data-state="play"] .k-home span { display: none; }
+body[data-state="play"] .k-home { padding: 0; width: 38px; }
+
+.k-title, .k-over {
+  position: absolute; left: 0; right: 0; text-align: center; padding: 0 24px;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.k-title { top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; padding-top: calc(env(safe-area-inset-top) + 58px); }
+
+.k-title h1 {
+  margin: 0; font-size: clamp(44px, 12vw, 64px); line-height: .95; font-weight: 900; letter-spacing: -.02em;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, .25), 0 10px 30px rgba(0, 0, 0, .35);
+}
+.k-verb { margin: 14px 0 0; font-size: 18px; font-weight: 600; opacity: .92; text-shadow: 0 2px 8px rgba(0, 0, 0, .5); }
+.k-ctawrap { position: absolute; left: 0; right: 0; transform: translateY(-50%); text-align: center; }
+.k-cta {
+  display: inline-block; font-size: 20px; font-weight: 800; padding: 12px 26px; border-radius: 999px;
+  background: rgba(8, 10, 24, .62); animation: k-pulse 1.4s ease-in-out infinite;
+}
+.k-bestline { position: absolute; bottom: calc(env(safe-area-inset-bottom) + 14px); left: 0; right: 0; font-size: 14px; opacity: .7; }
+@keyframes k-pulse { 50% { transform: scale(1.06); } }
+body:not([data-state="title"]) .k-title { opacity: 0; transform: translateY(-12px); }
+
+.k-over {
+  top: 50%; transform: translateY(-40%) scale(.96); opacity: 0;
+  margin: 0 auto; max-width: 340px; padding: 26px 20px 20px; border-radius: 24px;
+  background: rgba(10, 14, 30, .72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
+}
+.k-over.show { opacity: 1; transform: translateY(-50%) scale(1); }
+.k-over.show .k-row { pointer-events: auto; }
+.k-overtitle { font-size: 22px; font-weight: 800; opacity: .9; }
+.k-score { font-size: 76px; font-weight: 900; line-height: 1.05; letter-spacing: -.02em; }
+.k-best { font-size: 15px; font-weight: 700; opacity: .75; }
+.k-best.new { opacity: 1; color: #ffd45a; }
+.k-overline { font-size: 15px; opacity: .85; margin-top: 10px; min-height: 0; }
+.k-overline:empty { display: none; }
+.k-over .k-cta { margin: 18px 0 0; font-size: 17px; background: rgba(255, 255, 255, .12); }
+.k-row { display: flex; gap: 10px; justify-content: center; margin-top: 16px; pointer-events: none; }
+.k-pill { height: 42px; padding: 0 18px; border-radius: 21px; font-size: 15px; font-weight: 700; }
+.k-over:not(.show) .k-btn { pointer-events: none; }
+
+body.k-shot .k-ui { display: none; }
+@media (prefers-reduced-motion: reduce) { .k-cta { animation: none; } }
+
+/* 横屏手机：游戏区在中间很窄，标题和"点一下开始"放到左边的空白里 */
+@media (orientation: landscape) and (max-height: 520px) {
+  .k-title { right: auto; width: calc(50vw - 28.125vh); padding: 0 16px; justify-content: center; }
+  .k-title h1 { font-size: clamp(30px, 6vw, 48px); }
+  .k-verb { font-size: 16px; }
+  .k-ctawrap { position: static; transform: none; top: auto !important; margin-top: 22px; }
+  .k-title .k-cta { font-size: 17px; }
+  .k-bestline { position: static; margin-top: 14px; }
+}
