@@ -231,6 +231,7 @@
         state = 'over'; overT = 0;
         const b = best(), isBest = g.score > b;
         if (isBest) store.set(def.id + '.best', g.score);
+        track('game_over', { score: g.score, secs: Math.round(g.t), best: isBest ? 1 : 0 });
         ui.overTitle.textContent = g.overTitle || 'Game over';
         ui.score.textContent = g.score;
         ui.best.textContent = isBest && g.score > 0 ? 'New best!' : 'Best ' + Math.max(b, g.score);
@@ -241,9 +242,11 @@
     sound.quiet = demo;
     def.reset(g);
   }
+  const track = (name, params) => { try { if (window.track && !OPT.bot && !OPT.rec) window.track(name, Object.assign({ game: def.id }, params)); } catch (_) { } };
   function startPlay() {
     sound.unlock();
     newRun(false);
+    track('game_start', { again: overT > 0 ? 1 : 0 });
     state = 'play';
     block = rawDown;   // 开始那一下不算进游戏
     document.body.dataset.state = 'play';
@@ -346,6 +349,8 @@
     const share = el('button', 'k-btn k-pill', 'Share'); share.type = 'button';
     share.addEventListener('click', () => doShare(share));
     const more = el('a', 'k-btn k-pill', 'More games'); more.href = '../';
+    more.addEventListener('click', () => track('more_games', { from: 'over' }));
+    home.addEventListener('click', () => track('more_games', { from: 'corner' }));
     row.append(share, more);
     over.append(overTitle, score, bestEl, overLine, again, row);
 
@@ -356,6 +361,7 @@
     const b = best(); bestLine.textContent = [def.no ? 'No.' + def.no : '', b ? 'Best ' + b : ''].filter(Boolean).join(' · ');
   }
   async function doShare(btn) {
+    track('share', { score: g.score, how: navigator.share ? 'sheet' : 'copy' });
     const url = location.origin + location.pathname;
     const text = def.shareText ? def.shareText(g) : `I scored ${g.score} in ${def.title}. Can you beat it?`;
     try {
