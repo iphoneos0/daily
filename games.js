@@ -3,6 +3,12 @@
 // controls / fun / hook 给以后选题用：避免连着几天同一种操作、同一种乐趣、同一种短视频看点
 window.GAMES = [
   {
+    no: 2, slug: 'meowntain', date: '2026-11-24', title: 'Meowntain',
+    verb: 'Catch the cats. Stack them high.', focus: '50% 85%',
+    controls: 'drag', fun: ['balance', 'growth'],
+    hook: 'a wobbling tower of 30 cats sways, then TIMBER!',
+  },
+  {
     no: 1, slug: 'saywhen', date: '2026-11-23', title: 'Say When',
     verb: 'Hold to pour. Let go at the line.', focus: '50% 80%',
     controls: 'hold', fun: ['timing', 'judgement'],

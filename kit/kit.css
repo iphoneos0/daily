@@ -61,6 +61,9 @@ body:not([data-state="title"]) .k-title { opacity: 0; transform: translateY(-12p
 .k-over:not(.show) .k-btn { pointer-events: none; }
 
 body.k-shot .k-ui { display: none; }
+body.k-light .k-btn { background: rgba(16, 32, 64, .32); }
+body.k-light .k-title h1 { color: #16365c; text-shadow: 0 3px 0 #fff, 0 0 2px #fff, 0 0 22px rgba(255, 255, 255, .9); }
+body.k-light .k-verb, body.k-light .k-bestline { color: #16365c; text-shadow: 0 0 2px #fff, 0 0 10px #fff, 0 0 16px #fff; opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .k-cta { animation: none; } }
 
 /* 横屏手机：游戏区在中间很窄，标题和"点一下开始"放到左边的空白里 */

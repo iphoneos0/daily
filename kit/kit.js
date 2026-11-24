@@ -210,7 +210,7 @@
   function toLogical(e) { input.x = (e.clientX - ox) / sc; input.y = (e.clientY - oy) / sc; }
 
   // ---------- 状态 ----------
-  let def = null, g = null, state = 'title', overT = 0, demoWait = 0, botWas = false, ui = {};
+  let def = null, g = null, state = 'title', overT = 0, demoWait = 0, botWas = false, ui = {}, downSteps = 0;
   const best = () => store.get(def.id + '.best', 0);
 
   function newRun(demo) {
@@ -244,8 +244,16 @@
   }
 
   // 机器人：把 def.bot 给的"按着没有"转成跟真人一样的按下/松开
+  // bot 可以只回 true/false（按着没有），也可以回 {down, x, y, axis}（拖动类游戏：手指在哪）
   function botInput() {
-    const d = !!def.bot(g, OPT.skill);
+    const r = def.bot(g, OPT.skill);
+    let d;
+    if (r && typeof r === 'object') {
+      d = !!r.down;
+      if (r.x != null) input.x = r.x;
+      if (r.y != null) input.y = r.y;
+      input.axis = r.axis || 0;
+    } else d = !!r;
     input.pressed = d && !botWas; input.released = !d && botWas; input.down = d; botWas = d;
   }
 
@@ -254,6 +262,7 @@
     if (demo || OPT.bot) { if (def.bot) botInput(); else input.down = input.pressed = input.released = false; }
     else if (state === 'play') pollInput();
     else { pollInput(); input.down = input.pressed = input.released = false; }
+    if (state === 'play' && input.down) downSteps++;
     g.t += STEP; def.update(g, STEP, input);   // 结束后也继续更新（让洒出、爆炸这类动画播完），游戏自己看 g.ended
     stepFx(STEP);
     if (demo && g.ended) { demoWait -= STEP; if (demoWait <= 0) newRun(true); }
@@ -326,7 +335,7 @@
   }
   async function doShare(btn) {
     const url = location.origin + location.pathname;
-    const text = `I scored ${g.score} in ${def.title}. Can you beat it?`;
+    const text = def.shareText ? def.shareText(g) : `I scored ${g.score} in ${def.title}. Can you beat it?`;
     try {
       if (navigator.share) { await navigator.share({ title: def.title, text, url }); return; }
       await navigator.clipboard.writeText(text + ' ' + url);
@@ -393,11 +402,19 @@
       ctx = canvas.getContext('2d');
       document.body.dataset.state = 'title';
       if (OPT.shot) document.body.classList.add('k-shot');
+      if (d.light) document.body.classList.add('k-light');   // 浅色背景的游戏：按钮换深色底
       resize(); buildUI(); listen();
       newRun(true);
       if (OPT.bot) startPlay();
       requestAnimationFrame(frame);
-      window.__kit = { get state() { return state; }, get g() { return g; }, start: startPlay };
+      // 给自动检查用：downSteps 玩的时候有多少帧是按着的；selfTest / statLine / thumbReady 由游戏自己给（可不给）
+      window.__kit = {
+        get state() { return state; }, get g() { return g; }, start: startPlay,
+        get downSteps() { return downSteps; },
+        selfTest: () => def.selfTest ? def.selfTest(g) : null,
+        statLine: () => def.statLine ? def.statLine(g) : '',
+        thumbReady: () => def.thumbReady ? !!def.thumbReady(g) : g.t > 12,
+      };
     },
   };
 })();

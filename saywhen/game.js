@@ -300,6 +300,11 @@
       }
     },
 
+    // 给自动检查用
+    selfTest(g) { return { ok: g.results.length > 0, msg: '倒了一杯，判定 ' + (g.results[0] || '无') }; },
+    statLine(g) { return g.served + ' 杯'; },
+    thumbReady(g) { return g.n >= 6 && g.cur.phase === 'pour' && g.cur.poured > g.cur.Q * 1.25; },
+
     // 机器人：像真人一样，知道"现在松手最后会到哪"，但松手时机有误差（skill × 0.1 秒的标准差）
     // skill 0.25 ≈ 高手，0.5 ≈ 熟练，0.8 ≈ 普通，1.2 ≈ 新手
     bot(g, skill) {
