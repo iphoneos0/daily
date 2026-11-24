@@ -4,6 +4,8 @@
 // - 固定 60 帧更新；开始页（有 bot 时后台自动演示）、结束页、最高分、分享、静音、回首页
 // - 合成音效、粒子、震屏、飘字
 // - 网址参数：?bot 自动玩（&loop 玩完接着玩）  ?speed=8 加速  ?seed=3 固定随机  ?skill=0.5 机器人水平  ?shot 隐藏界面（截缩略图）
+//   ?rec 录短视频（不自己走，由 tools/rec 用 __kit.advance(秒) 推；隐藏界面；&cap= &cap2= 两行字幕）
+//   Kit.mark(名字, 分量) 记一个高光（比如塔塌了几只猫），录视频时挑最大的那个
 (function () {
   'use strict';
   const W = 360, H = 640, STEP = 1 / 60;
@@ -11,6 +13,7 @@
   const OPT = {
     bot: qs.has('bot'), shot: qs.has('shot'), loop: qs.has('loop'),
     speed: Math.max(1, Math.min(50, +qs.get('speed') || 1)),
+    rec: qs.has('rec'), cap: qs.get('cap') || '', cap2: qs.get('cap2') || '',
     seed: qs.has('seed') ? (+qs.get('seed') >>> 0) : null,
     skill: qs.has('skill') ? +qs.get('skill') : null,
   };
@@ -194,6 +197,10 @@
     };
   }
 
+  // ---------- 高光（录视频用） ----------
+  const marks = [];
+  function mark(type, weight = 1) { if (state === 'play') marks.push({ t: +g.t.toFixed(3), type, weight }); }
+
   // ---------- 画布 ----------
   let canvas, ctx, dpr = 1, cw = 0, ch = 0, sc = 1, ox = 0, oy = 0;
   const view = { x0: 0, y0: 0, x1: W, y1: H };
@@ -259,7 +266,7 @@
 
   function step() {
     const demo = state === 'title';
-    if (demo || OPT.bot) { if (def.bot) botInput(); else input.down = input.pressed = input.released = false; }
+    if (demo || OPT.bot || OPT.rec) { if (def.bot) botInput(); else input.down = input.pressed = input.released = false; }
     else if (state === 'play') pollInput();
     else { pollInput(); input.down = input.pressed = input.released = false; }
     if (state === 'play' && input.down) downSteps++;
@@ -284,6 +291,20 @@
     if (n >= 60 * OPT.speed) acc = 0;
     draw();
   }
+  // 录视频时画在画面上方的字幕（第一行大字、第二行小字），压在 HUD 下面一点
+  function drawCaption() {
+    ctx.save();
+    ctx.setTransform(dpr * sc, 0, 0, dpr * sc, dpr * ox, dpr * oy);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+    const y = 120;
+    ctx.font = `900 30px ${FONT}`;
+    const w = Math.min(340, Math.max(ctx.measureText(OPT.cap).width, OPT.cap2 ? (ctx.font = `800 16px ${FONT}`, ctx.measureText(OPT.cap2).width) : 0) + 36);
+    ctx.fillStyle = 'rgba(10,12,28,.72)';
+    ctx.beginPath(); ctx.roundRect(180 - w / 2, y - 26, w, OPT.cap2 ? 76 : 52, 16); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = `900 30px ${FONT}`; ctx.fillText(OPT.cap, 180, y);
+    if (OPT.cap2) { ctx.fillStyle = '#ffd84a'; ctx.font = `800 16px ${FONT}`; ctx.fillText(OPT.cap2, 180, y + 32); }
+    ctx.restore();
+  }
   function draw() {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = def.bg || '#000';
@@ -292,6 +313,7 @@
     ctx.setTransform(dpr * sc, 0, 0, dpr * sc, dpr * (ox + sx * sc), dpr * (oy + sy * sc));
     def.draw(ctx, g, view);
     drawFx(ctx);
+    if (OPT.rec && OPT.cap) drawCaption();
   }
 
   // ---------- 界面 ----------
@@ -393,7 +415,7 @@
   }
 
   window.Kit = {
-    W, H, FONT, input, sound, store, rand, rr, pick, burst, pop, shake, opt: OPT, coarse,
+    W, H, FONT, input, sound, store, rand, rr, pick, burst, pop, shake, mark, opt: OPT, coarse,
     get state() { return state; },
     game(d) {
       def = d;
@@ -405,8 +427,9 @@
       if (d.light) document.body.classList.add('k-light');   // 浅色背景的游戏：按钮换深色底
       resize(); buildUI(); listen();
       newRun(true);
-      if (OPT.bot) startPlay();
-      requestAnimationFrame(frame);
+      if (OPT.bot || OPT.rec) startPlay();
+      if (OPT.rec) document.body.classList.add('k-shot');
+      else requestAnimationFrame(frame);
       // 给自动检查用：downSteps 玩的时候有多少帧是按着的；selfTest / statLine / thumbReady 由游戏自己给（可不给）
       window.__kit = {
         get state() { return state; }, get g() { return g; }, start: startPlay,
@@ -414,6 +437,10 @@
         selfTest: () => def.selfTest ? def.selfTest(g) : null,
         statLine: () => def.statLine ? def.statLine(g) : '',
         thumbReady: () => def.thumbReady ? !!def.thumbReady(g) : g.t > 12,
+        ogReady: () => def.ogReady ? !!def.ogReady(g) : (def.thumbReady ? !!def.thumbReady(g) : g.t > 12),
+        marks,
+        // 录视频：往前走 sec 秒（只算不画），最后画一帧；返回现在的状态
+        advance(sec) { let n = Math.round(sec / STEP); while (n-- > 0) step(); draw(); return { t: g.t, state, score: g.score }; },
       };
     },
   };

@@ -117,6 +117,7 @@
     if (perfect) pop('PURRFECT!', sx(g, c.x), sy(g, c.yc) - 30, { color: '#ffd84a', size: 22, life: 0.8 });
     if (n % 10 === 0 && n > (g.milestone || 0)) {
       g.milestone = n;
+      Kit.mark('milestone', n / 10);
       pop(`${n} CATS!`, 180, 250, { color: '#fff', size: 38, life: 1.3 });
       if (g.hearts < 3) { g.hearts++; pop('+♥', 236, 64, { color: '#ff5f7e', size: 24, life: 1 }); }
       burst(180, 260, 40, { color: '#ffd84a', speed: 260, life: 1, size: 3, gravity: 300 });
@@ -129,6 +130,7 @@
   function topple(g, j, dir) {
     // j = 断开处下面那只的序号（-1 是箱子），它上面的全掉
     const gone = g.stack.splice(j + 1);
+    Kit.mark('timber', gone.length + g.H / 300);
     gone.forEach((c, i) => { c.face = 'scared'; fly(g, c, dir * rr(40, 150) + g.thv * (c.yc - boxTop()) * -0.3, rr(-180, 20), dir * rr(2, 6)); });
     g.H = towerH(g); g.th *= 0.3; g.thv *= 0.3; g.teeter = [];
     layout(g);
@@ -141,6 +143,7 @@
     const k = Math.min(3, g.stack.length);
     if (k) {
       const gone = g.stack.splice(g.stack.length - k);
+      Kit.mark('hiss', k * 0.8);
       gone.forEach(c => { c.face = 'scared'; fly(g, c, rr(-1, 1) < 0 ? rr(-220, -90) : rr(90, 220), rr(-420, -260), rr(-8, 8)); });
       g.H = towerH(g); layout(g);
       pop('HISS!', sx(g, dog.x), sy(g, dog.y) - 30, { color: '#ff9f43', size: 30 });
@@ -319,7 +322,8 @@
 
     selfTest(g) { return { ok: g.moved > 40, msg: `拖动后纸箱移动了 ${Math.round(g.moved)}` }; },
     statLine(g) { return `最高 ${g.score} 只`; },
-    shareText(g) { return `I stacked ${g.score} cat${g.score === 1 ? '' : 's'} into a Meowntain. Can you beat it?`; },
+    shareText(g) { return `Meowntain 🐱×${g.score} 📦\nI stacked ${g.score} cat${g.score === 1 ? '' : 's'} before TIMBER! Can you beat it?`; },
+    ogReady(g) { return g.stack.length >= 22 && g.maxTeeter < 0.05; },
     thumbReady(g) { return g.stack.length >= 9 && g.falling.some(f => !f.dog && f.y > boxTop() - g.H - 200 && f.y < boxTop() - g.H - 60); },
 
     draw(ctx, g, view) {

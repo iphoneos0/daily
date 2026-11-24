@@ -134,12 +134,15 @@
         sound.tone(520, 0.1, { type: 'triangle', vol: 0.16 });
         sound.tone(780, 0.14, { type: 'triangle', vol: 0.16, delay: 0.06 });
       }
+      if (kind === 'perfect' && g.streak >= 3) Kit.mark('streak', g.streak);
+      if (c.boss) Kit.mark('boss', 4);
       if (c.boss && g.hearts < 3) { g.hearts++; pop('+♥', c.x + 58, y + 6, { color: '#ff6b8a', size: 26 }); }
     } else {
       g.streak = 0;
       g.hearts--;
       g.lastMiss = kind;
       pop(R.text, c.x, y, { color: R.color, size: 30 });
+      if (kind === 'spill') Kit.mark('spill', 3 + (c.foamy ? 2 : 0));
       shake(kind === 'spill' ? 10 : 6);
       if (kind === 'short') sound.tone(300, 0.28, { type: 'triangle', vol: 0.2, to: 170 });
       else { sound.noise(0.4, { freq: 900, to: 260, vol: 0.32 }); sound.tone(150, 0.3, { vol: 0.28, to: 70 }); }
@@ -303,6 +306,13 @@
     // 给自动检查用
     selfTest(g) { return { ok: g.results.length > 0, msg: '倒了一杯，判定 ' + (g.results[0] || '无') }; },
     statLine(g) { return g.served + ' 杯'; },
+    // 分享：像 Wordle 一样一杯一个色块（黄＝完美、绿＝好、红＝失手），不剧透、能炫耀
+    shareText(g) {
+      const E = { perfect: '🟨', good: '🟩', short: '🟥', much: '🟥', spill: '🟥' };
+      const row = g.results.slice(0, 30).map(r => E[r]).join('') + (g.results.length > 30 ? '…' : '');
+      return `Say When 🥤 ${g.served} drinks, ${g.score} pts\n${row}\nCan you pour better?`;
+    },
+    ogReady(g) { return g.n >= 6 && g.cur.foamy && g.cur.phase === 'wait' && g.cur.F > g.cur.cap * 0.1; },
     thumbReady(g) { return g.n >= 6 && g.cur.phase === 'pour' && g.cur.poured > g.cur.Q * 1.25; },
 
     // 机器人：像真人一样，知道"现在松手最后会到哪"，但松手时机有误差（skill × 0.1 秒的标准差）
