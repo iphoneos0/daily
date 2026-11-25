@@ -3,6 +3,14 @@
 // controls / fun / hook 给以后选题用：避免连着几天同一种操作、同一种乐趣、同一种短视频看点
 window.GAMES = [
   {
+    // 也不是 kit 做的小游戏：环球躲烟（~/Desktop/环球躲烟），App Store 上的 Hold Your Breath: Smoke Dash 的网页版。
+    // site/hyb/ 由 tools/sync-hyb.sh 从环球躲烟的 main 导出，别在这里改；网页适配在 tools/hyb/web.js（不放广告、内购改成去 App Store）
+    no: 4, slug: 'hyb', date: '2026-11-27', title: 'Hold Your Breath',
+    verb: 'Hold your breath. Outrun the smog.', focus: '50% 40%',
+    controls: 'hold', fun: ['timing', 'run'],
+    hook: 'a wall of smog swallows the street, the kid holds his breath and dashes through',
+  },
+  {
     // 不是用 kit 做的每日小游戏，是按调研打法做的那款大的（~/Desktop/沙子方块），有美术，网页、iPhone、安卓同一份代码。
     // 这里的文件由那边的 tools/publish-daily.sh 同步过来，别在这里改 site/sandjar/。名字是工作名，上架前要换（App Store 已有 Sandjar）
     no: 3, slug: 'sandjar', date: '2026-11-26', title: 'Sand Jar',

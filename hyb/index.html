@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2b3140">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Hold Your Breath · lulucard daily</title>
+<meta name="build" content="hyb a2eeeef">
+<meta name="description" content="Hold your breath and outrun the smog. Free in your browser, also on iPhone.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hold Your Breath">
+<meta property="og:description" content="Hold your breath. Outrun the smog.">
+<meta property="og:image" content="https://iphoneos0.com/daily/hyb/og.jpg">
+<meta property="og:url" content="https://iphoneos0.com/daily/hyb/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="apple-itunes-app" content="app-id=6835118803">
+<link rel="apple-touch-icon" href="assets/img/app-icon.jpg">
+<link rel="icon" href="assets/img/app-icon.jpg">
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<!-- 多语言（js/i18n.js）：data-t 的文字、data-ta 的 aria-label 在切换语言时换掉；由代码写进去的字不加这两个，各自在 main.js 里过 HYB.L -->
+<div id="turn" hidden><p data-t>Turn your phone upright</p></div>
+<div id="app">
+  <div id="stage">
+    <canvas id="cv" aria-label="City street, side view" data-ta></canvas>
+
+    <div id="pad">
+      <div id="mini">
+        <button id="bPause" type="button" aria-label="Pause" data-ta><svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg></button>
+        <button id="bMute" type="button" aria-label="Sound" data-ta><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+
+    <section id="loading" class="veil">
+      <img class="loadlogo" src="assets/img/logo.png" alt="">
+      <div class="load"><b data-t>Packing…</b><span><i id="loadBar"></i></span></div>
+    </section>
+
+    <section id="title" class="veil" hidden>
+      <div class="topbar">
+        <div class="lefts">
+          <button id="bSettings" class="round" type="button" aria-label="Settings" data-ta><svg viewBox="0 0 24 24" fill="#fff" stroke="#1c2230" stroke-width="2" stroke-linejoin="round"><path d="M10.3 2.5h3.4l.5 2.6 1.9.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.9 2.6.5v3.4l-2.6.5-.8 1.9 1.5 2.2-2.4 2.4-2.2-1.5-1.9.8-.5 2.6h-3.4l-.5-2.6-1.9-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.9-2.6-.5v-3.4l2.6-.5.8-1.9-1.5-2.2 2.4-2.4 2.2 1.5 1.9-.8z"/><circle cx="12" cy="12" r="3.4" fill="#ffd23f"/></svg></button>
+          <button id="bTunes" class="round tunesbtn" type="button" aria-label="Music test" data-ta hidden>♪</button>
+          <button id="bGift" class="round gift" type="button" aria-label="Daily rewards" data-ta><svg viewBox="0 0 24 24" stroke="#1c2230" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M4.5 11h15v9h-15z" fill="#fff"/><path d="M3.5 7.500h17V11h-17z" fill="#fff"/><path d="M10.200 7.500h3.600V20h-3.600z" fill="#f0433a"/><path d="M12 7.500C10.500 4 7 4 7.200 6.200 7.400 7.600 10 7.500 12 7.500zM12 7.500c1.500-3.500 5-3.500 4.800-1.300-.2 1.400-2.800 1.300-4.800 1.300z" fill="#f0433a"/></svg><i class="badge" id="tGiftBadge" hidden>!</i></button>
+        </div>
+        <p class="bestpill" id="keys" hidden><svg viewBox="0 0 24 24" fill="#ffd23f" stroke="#1c2230" stroke-width="2.200" stroke-linejoin="round" stroke-linecap="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.500H4c0 3 1.500 4.500 3.500 4.500M17 5.500h3c0 3-1.500 4.500-3.500 4.500" fill="none"/><path d="M12 14v3.500M8.500 20h7" fill="none"/></svg><span id="tBest"></span></p>
+        <button id="bCoins" class="coin" type="button" aria-label="Store" data-ta><span id="tCoins">0</span><i>+</i></button>
+      </div>
+      <div class="head">
+        <img id="tLogo" class="logoimg" alt="Hold Your Breath">
+        <button id="bCities" class="ribbon" type="button">NEW YORK · CHAPTER 1</button>
+      </div>
+      <div class="menu">
+        <button id="tGoal" class="goal" type="button" hidden></button>
+        <button id="bStart" class="play" type="button"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="#1c2230" stroke="#1c2230" stroke-width="2.5" stroke-linejoin="round"/></svg><span data-t>PLAY</span></button>
+        <div class="tiles">
+          <button id="bDaily" class="tile t-daily" type="button" hidden><img data-img="icon-daily" alt=""><b data-t>Daily</b><i class="badge" id="tDailyBadge" hidden>!</i></button>
+          <button id="bMissions" class="tile t-miss" type="button"><img data-img="icon-missions" alt=""><b data-t>Missions</b><i class="badge" id="tMDone" hidden></i></button>
+          <button id="bShop" class="tile t-up" type="button"><img data-img="icon-upgrades" alt=""><b data-t>Upgrades</b><i class="badge" id="tUpBadge" hidden>!</i></button>
+          <button id="bHats" class="tile t-hats" type="button"><img id="tHatImg" alt=""><b data-t>Hats</b><i class="badge" id="tHatBadge" hidden>!</i></button>
+          <button id="bStore" class="tile t-store" type="button"><img data-img="icon-store" alt=""><b data-t>Store</b></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="pause" class="veil center" hidden>
+      <article class="tag small">
+        <div class="mhead"><h2 data-t>Take five.</h2></div>
+        <ul class="missions pmissions" id="pMissions"></ul>
+        <button id="bResume" class="go" type="button" data-t>Keep running</button>
+        <div class="row2 psw">
+          <button id="bMusic" class="setrow" type="button">Music: on</button>
+          <button id="bSfx" class="setrow" type="button">Sound effects: on</button>
+        </div>
+        <button id="bBuzz" class="setrow" type="button" hidden>Vibration: on</button>
+        <button id="bStyle" class="ghost" type="button" hidden>Music style: A · Original</button>
+        <button id="bHowPause" class="ghost" type="button" data-t>How to play</button>
+        <button id="bQuit" class="ghost quit" type="button" data-t>Quit run</button>
+      </article>
+    </section>
+
+    <!-- 结算：上半截是画布上被追上的那一幕，这里只有下半截和右上角的钱包 -->
+    <section id="over" class="veil" hidden>
+      <div class="otop">
+        <div class="oflags" id="oFlags"></div>
+        <span id="oWallet" class="wallet"><span id="oCoins">0</span></span>
+      </div>
+      <div class="obot">
+        <p class="odist"><b id="oDist">0</b><span data-t>m</span></p>
+        <p class="oline" id="oLine"></p>
+        <div class="oroute">
+          <div class="route" id="oRoute"></div>
+          <p class="onext" id="oNext"></p>
+          <button id="bDayGo" class="daygo" type="button" hidden></button>
+        </div>
+        <p class="otip" id="oTip"></p>
+        <button id="bRetry" class="play again" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="#1c2230" stroke-width="3.200" stroke-linecap="round" stroke-linejoin="round"><path d="M19.500 12a7.500 7.500 0 1 1-2.200-5.300"/><path d="M19.800 3.500v4.700h-4.700"/></svg><span>RUN AGAIN</span></button>
+        <!-- 这一局进了多少金币、在攒什么（2026-11-21，docs/32）：挨着下面的看广告翻倍和升级按钮 -->
+        <div class="ocoins"><p class="oearn" id="oEarn"></p><button id="oGoal" class="goal sm" type="button" hidden></button></div>
+        <div class="orow">
+          <button id="bHome" class="round lg" type="button" aria-label="Home" data-ta><svg viewBox="0 0 24 24" fill="#fff" stroke="#1c2230" stroke-width="2.200" stroke-linejoin="round" stroke-linecap="round"><path d="M3.500 11.500 12 4l8.500 7.500"/><path d="M6 10v10h4.500v-5.500h3V20H18V10"/></svg></button>
+          <div class="lucky" id="oLucky"><div class="lbar" id="oBar"><i class="needle" id="oNeedle"></i></div><button id="bDouble" class="dbl" type="button"></button></div>
+          <button id="bShop2" class="round lg up" type="button" aria-label="Upgrades" data-ta><img data-img="icon-upgrades" alt=""><i class="badge" id="oUpBadge" hidden>!</i></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="revive" class="veil bottom" hidden>
+      <article class="tag small">
+        <div class="mhead"><h2 data-t>Keep going?</h2></div>
+        <p id="rvText"></p>
+        <i class="rvbar"><i id="rvFill"></i></i>
+        <button id="bRevive" class="go" type="button" data-t>▶︎ Watch an ad</button>
+        <button id="bRevivePay" class="go pay" type="button">Pay coins</button>
+        <p class="legal"><button id="bNoRevive" type="button">No thanks</button></p>
+      </article>
+    </section>
+
+    <section id="missions" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2 id="tRank">Missions</h2><span id="mCoins" class="coin">0</span></div><button id="bMissionsClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <ul class="missions" id="tMissions"></ul>
+        <p class="note" id="mNote"></p>
+      </article>
+    </section>
+
+    <section id="story" class="vn" hidden>
+      <img id="stBg" class="bg" alt="">
+      <div class="cast"><img id="stL" class="l" alt=""><img id="stR" class="r" alt=""></div>
+      <button id="bStorySkip" class="chip" type="button" data-t>Skip</button>
+      <div class="dlg" id="stDlg">
+        <b class="name" id="stName"></b>
+        <p id="stText"></p>
+        <i class="more" id="stMore"></i>
+      </div>
+    </section>
+
+    <!-- 帽子：收集。上面是戴上的样子（没拿到的也能先试戴），下面八顶，一个按钮：戴上 / 摘下 / 买 -->
+    <section id="hats" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2><span data-t>Hats</span> <small id="hCount"></small></h2><span id="hCoins" class="coin">0</span></div><button id="bHatsClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <!-- 舞台：一条矮的，Leo 戴着选中的帽子来回走（main.js 的 hatStage）；名字、来路、怎么拿在舞台下面一行 -->
+        <div class="hatpick"><canvas id="hStage" aria-hidden="true"></canvas><i class="try" id="hTry" hidden></i></div>
+        <div class="hatinfo"><b id="hName"></b><i class="rar" id="hRar"></i><span id="hHow"></span></div>
+        <div class="hatgrid" id="hGrid"></div>
+        <button id="bHatGo" class="go" type="button">Wear it</button>
+        <button id="bHatRent" class="go rent" type="button" hidden></button>
+      </article>
+    </section>
+
+    <!-- 七日签到（docs/20）：七张奖励卡，今天那张发光，领了盖章、金币飞进钱包；第 7 天是大奖 -->
+    <section id="checkin" class="veil center" hidden>
+      <article class="tag small shop ci">
+        <div class="mhead"><h2 data-t>Daily Rewards</h2><span id="ciCoins" class="coin">0</span></div><button id="bCiClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <p class="cisub" id="ciSub"></p>
+        <div class="cigrid" id="ciGrid"></div>
+        <p class="cinote" id="ciNote"></p>
+        <div class="cibtns"><button id="bCiClaim" class="go" type="button" data-t>Claim</button><button id="bCiDouble" class="go civid" type="button" data-t>▶︎ Claim ×2</button></div>
+      </article>
+    </section>
+
+    <!-- 第一次跑完每日挑战：问一句要不要明天提醒（说好了才弹系统的通知权限） -->
+    <section id="remind" class="veil center" hidden>
+      <article class="tag small">
+        <div class="mhead"><h2 data-t>Tomorrow’s run?</h2></div>
+        <p data-t>There’s a new daily street every day. Want a nudge tomorrow at 6 pm, so your streak doesn’t break?</p>
+        <button id="bRemindYes" class="go" type="button" data-t>Remind me</button>
+        <button id="bRemindNo" class="ghost" type="button" data-t>Not now</button>
+      </article>
+    </section>
+
+    <section id="cities" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2 data-t>Your trip</h2></div><button id="bCitiesClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <p class="note" id="cNote"></p>
+        <div id="cList" class="shoplist"></div>
+        <p class="note daynote" id="cDaysNote" data-t hidden>Start from a day you’ve reached:</p>
+        <div id="cDays" class="days"></div>
+      </article>
+    </section>
+
+    <!-- 试听配乐：测试用，选定一种以后连同 bTunes、bStyle 一起删 -->
+    <section id="tunes" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2 data-t>Music test</h2><span data-t>same tune · 4 styles</span></div>
+        <div id="tuStyles" class="tunes"></div>
+        <div id="tuSongs" class="row3"></div>
+        <button id="bTunesClose" class="go" type="button" data-t>Use this one</button>
+      </article>
+    </section>
+
+    <section id="daily" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2 id="dTitle">Daily run</h2><span id="dCoins" class="coin">0</span></div><button id="bDailyClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <p class="note" id="dNote"></p>
+        <div class="streak" id="dStreak"></div>
+        <div class="gearpick still" id="dGear"></div>
+        <ul class="missions" id="dGoals"></ul>
+        <button id="bDailyGo" class="go" type="button" data-t>Play today’s run</button>
+      </article>
+    </section>
+
+    <section id="store" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2 data-t>Store</h2><span id="stCoins" class="coin">0</span></div><button id="bStoreClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <div id="stList" class="shoplist"></div>
+        <p class="note" id="stNote"></p>
+        <button id="bResetCoins" class="ghost" type="button" data-t hidden>Test build: set my coins back to 0</button>
+        <p class="legal"><button id="bRestore" type="button" data-t>Restore purchases</button></p>
+      </article>
+    </section>
+
+    <section id="shop" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2 data-t>Upgrades</h2><span id="sCoins" class="coin">0</span></div><button id="bShopClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <p class="note" id="sNote">Permanent. Every run starts stronger.</p>
+        <div id="sList" class="shoplist"></div>
+      </article>
+    </section>
+
+    <section id="gear" class="veil center" hidden>
+      <article class="tag small shop">
+        <div class="mhead"><h2 data-t>Pick gear</h2><span id="gCoins" class="coin">0</span></div><button id="bGearBack" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <p class="note" id="gNote">One item, for this run only.</p>
+        <div id="gList" class="shoplist"></div>
+        <button id="bGearAd" class="go civid" type="button" hidden></button>
+        <div class="row2">
+          <button id="bReroll" class="ghost" type="button">Reroll</button>
+          <button id="bGearSkip" class="ghost" type="button" data-t>Run without gear</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- 设置（2026-11-17）：主页左上角的齿轮。语言、声音、震动、每日提醒、怎么玩、故事、隐私政策都在这里。
+         原来语言藏在暂停菜单和「怎么玩」里，问号、故事各占主页一个圆按钮 -->
+    <section id="settings" class="veil center" hidden>
+      <article class="tag small settings">
+        <div class="mhead"><h2 data-t>Settings</h2></div>
+        <button id="bSetClose" class="x" type="button" aria-label="Close" data-ta><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        <p class="setlab"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" stroke="#1c2230" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="12" r="8.6" fill="#8fd8ff"/><path d="M3.6 12h16.8M12 3.4c2.6 2.6 3.6 5.6 3.6 8.6s-1 6-3.6 8.6c-2.6-2.6-3.6-5.6-3.6-8.6s1-6 3.6-8.6z" fill="none" stroke-width="1.8"/></svg> <span data-t>Language</span></p>
+        <div class="row2 langs" id="sLangs"></div>
+        <p class="setlab" data-t>Sound</p>
+        <div class="setlist">
+          <button id="sMusic" class="setrow" type="button"></button>
+          <button id="sSfx" class="setrow" type="button"></button>
+          <button id="sBuzz" class="setrow" type="button" hidden></button>
+          <button id="sRemind" class="setrow" type="button" hidden></button>
+        </div>
+        <div class="row2 more">
+          <button id="sHow" class="ghost" type="button" data-t>How to play</button>
+          <button id="sStory" class="ghost" type="button" data-t>Story</button>
+        </div>
+        <p class="legal"><button id="bPolicy" type="button" data-t>Privacy policy</button><button id="bAdChoices" type="button" data-t hidden>Ad privacy choices</button></p>
+      </article>
+    </section>
+
+    <section id="how" class="veil center" hidden>
+      <article class="tag how">
+        <div class="mhead"><h2 id="howHead" data-t>How to play</h2></div>
+        <ul class="howlist" id="howList"></ul>
+        <button id="bHowClose" class="go" type="button" data-t>Got it</button>
+        <button id="bLog" class="ghost" type="button" data-t hidden>Playtest log</button>
+        <button id="bCourse" class="ghost" type="button" hidden>Track</button>
+        <p class="diag" id="diag"></p>
+      </article>
+    </section>
+
+    <!-- 试玩记录：测试者模式里才看得到（docs/02 的 5 人试玩） -->
+    <section id="log" class="veil center" hidden>
+      <article class="tag small shop logbox">
+        <div class="mhead"><h2 data-t>Playtest log</h2></div>
+        <pre id="logText"></pre>
+        <div class="row2"><button id="bLogCopy" class="ghost" type="button" data-t>Copy</button><button id="bLogClear" class="ghost" type="button" data-t>Clear</button></div>
+        <button id="bLogClose" class="go" type="button" data-t>Close</button>
+      </article>
+    </section>
+    <!-- 隐私政策：打包在游戏里的 privacy.html，没网也能看 -->
+    <section id="policy" class="veil center" hidden>
+      <article class="tag policybox">
+        <iframe id="policyFrame" title="Privacy policy"></iframe>
+        <button id="bPolicyClose" class="go" type="button" data-t>Close</button>
+      </article>
+    </section>
+    <!-- 开奖（docs/33）：买到东西、看广告领到东西的那一下，整屏亮起来：转的光、大图弹出来、数字往上滚、彩纸、Leo 在下面道谢 -->
+    <section id="reward" class="veil center rw" hidden>
+      <div class="rwbox">
+        <i class="rwrays"></i>
+        <p class="rwkick" id="rwKick"></p>
+        <div class="rwpic" id="rwPic"></div>
+        <h2 class="rwtitle" id="rwTitle"></h2>
+        <p class="rwsub" id="rwSub"></p>
+        <button id="bRwGo" class="go" type="button" data-t>Collect</button>
+        <button id="bRwNext" class="goal" type="button" hidden></button>
+      </div>
+      <div class="rwconf" id="rwConf"></div>
+      <img class="rwleo" src="assets/img/bust-leo-happy.png" alt="">
+      <p class="rwsay" id="rwSay"></p>
+    </section>
+    <section id="ad" class="veil center" hidden>
+      <article class="adbox">
+        <p class="kicker" id="adKick" data-t>Ad placeholder</p>
+        <h2 id="adTitle"></h2>
+        <p id="adText"></p>
+        <button id="bAdClose" class="ghost" type="button" disabled>3</button>
+      </article>
+    </section>
+  </div>
+</div>
+<script src="../a.js"></script>
+<script src="web.js"></script>
+<script src="js/manifest.js"></script>
+<script src="js/core.js"></script>
+<script src="js/hats.js"></script>
+<script src="js/bossfit.js"></script>
+<script>
+  if (window.hybNativeStore) document.documentElement.classList.add('hyb-ios');
+  HYB.store = window.hybNativeStore ?? {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+</script>
+<script src="js/i18n.js"></script>
+<script>HYB.applyStatic();</script>
+<script src="js/render.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/autopilot.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
