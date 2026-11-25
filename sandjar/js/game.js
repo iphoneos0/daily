@@ -225,11 +225,19 @@
     more.classList.remove('hide');
     more.addEventListener('click', () => track('more_games', { from: 'over' }));
   }
+  // 两局之间的插屏（docs/02 第六节：玩的时候绝不放；从第 4 局起，点了「再来一瓶」以后放，至少隔 3 分钟）。
+  // 网页里由每日一游的 ads.js 提供 window.webAds（谷歌 AdSense 的 H5 游戏广告）；App 壳以后接 AdMob；都没有就直接开下一局
+  let adWait = false;
   document.getElementById('again').addEventListener('click', () => {
+    if (adWait) return;
     Snd.unlock();
     store.del('sand1-cur');
     pushLog(record(+((performance.now() - run.overShown) / 1000).toFixed(1)));
-    start();
+    if (window.webAds && runs >= 3 && !REC) {
+      adWait = true;
+      document.getElementById('over').classList.add('hide');
+      window.webAds.inter('again', { gap: 180 }).then(() => { adWait = false; start(); });
+    } else start();
   });
   // 切走或关掉页面时，先把这一局记在 sand1-cur；回来接着玩就删掉，没回来的话下次打开时并进记录。
   // 这样玩到一半关掉的（quit）、结束了没点再来一局的（retrySec 为 null）都不会漏，iPhone 上直接划掉 Safari 也算。

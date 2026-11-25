@@ -243,7 +243,17 @@
     def.reset(g);
   }
   const track = (name, params) => { try { if (window.track && !OPT.bot && !OPT.rec) window.track(name, Object.assign({ game: def.id }, params)); } catch (_) { } };
+  let plays = 0, adBusy = false;   // 这次打开网页玩了几局；正在等插屏
+  // 再来一局：第 3 局结束以后起，先放一条插屏（site/ads.js；间隔、测试模式都在那边管），放完再开
+  function replay() {
+    if (adBusy) return;
+    if (window.webAds && plays >= 3 && !OPT.bot && !OPT.rec) {
+      adBusy = true;
+      window.webAds.inter('again').then(() => { adBusy = false; startPlay(); });
+    } else startPlay();
+  }
   function startPlay() {
+    plays++;
     sound.unlock();
     newRun(false);
     track('game_start', { again: overT > 0 ? 1 : 0 });
@@ -373,7 +383,7 @@
   const isUI = t => !!(t && t.closest && t.closest('.k-btn'));
   function tapToGo() {
     if (state === 'title') startPlay();
-    else if (state === 'over' && overT > 1.0) startPlay();
+    else if (state === 'over' && overT > 1.0) replay();
   }
 
   function listen() {
