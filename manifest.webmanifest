@@ -1,11 +1,15 @@
 {
-  "name": "lulucard daily",
-  "short_name": "Daily",
+  "name": "Banana Peel Games",
+  "short_name": "Banana Peel",
   "description": "A tiny new game every day.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#14162b",
-  "theme_color": "#14162b",
-  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+  "background_color": "#006353",
+  "theme_color": "#006353",
+  "icons": [
+    { "src": "brand/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "brand/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "brand/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }

@@ -3,26 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>lulucard daily · a tiny new game every day</title>
+<title>Banana Peel Games · a tiny new game every day</title>
 <meta name="description" content="A tiny new game every day. Free, nothing to install. Plays on your phone, tablet or computer.">
-<meta name="theme-color" content="#fff6e9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14162b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFF8EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D2420" media="(prefers-color-scheme: dark)">
 <meta property="og:type" content="website">
-<meta property="og:title" content="lulucard daily">
+<meta property="og:title" content="Banana Peel Games · a tiny new game every day">
 <meta property="og:description" content="A tiny new game every day. Free, in your browser.">
 <meta property="og:url" content="https://iphoneos0.com/daily/">
-<meta property="og:image" content="https://iphoneos0.com/daily/og.jpg">
+<meta property="og:image" content="https://iphoneos0.com/daily/og.jpg?v=2">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="brand/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
+  /* Banana Peel Games 的颜色和字（brand/，docs/05）：深青绿 + 香蕉黄 + 奶油色，标题用 Lilita One */
+  @font-face { font-family: "Lilita One"; src: url(brand/LilitaOne-Regular.ttf) format("truetype"); font-display: swap; }
   :root {
-    --bg: #fff6e9; --card: #ffffff; --ink: #1e1b2e; --soft: #6c6577; --line: #f0e3cf;
-    --accent: #ff5d3a; --accent2: #ffb238; --shadow: 0 1px 0 var(--line), 0 12px 30px rgba(90, 50, 20, .10);
+    --bg: #FFF8EC; --card: #ffffff; --ink: #12332D; --soft: #5E6F69; --line: #EFE6D6;
+    --accent: #006353; --yellow: #FFD646; --shadow: 0 1px 0 var(--line), 0 12px 30px rgba(0, 60, 50, .10);
+    --display: "Lilita One", system-ui, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #14162b; --card: #1f2240; --ink: #f4f1ff; --soft: #a7a3c2; --line: #2d3156; --shadow: 0 1px 0 var(--line), 0 12px 30px rgba(0, 0, 0, .35); }
+    :root { --bg: #0D2420; --card: #143530; --ink: #F3FBF7; --soft: #9BB8AF; --line: #1E463F; --accent: #FFD646; --shadow: 0 1px 0 var(--line), 0 12px 30px rgba(0, 0, 0, .35); }
   }
   * { box-sizing: border-box; }
   body {
@@ -33,12 +36,14 @@
   a { color: inherit; }
   .wrap { max-width: 980px; margin: 0 auto; }
   .top { display: flex; align-items: center; justify-content: space-between; padding: max(18px, env(safe-area-inset-top)) 0 10px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 20px; letter-spacing: -.01em; text-decoration: none; }
-  .brand img { width: 34px; height: 34px; border-radius: 9px; }
-  .count { color: var(--soft); font-size: 14px; font-weight: 600; }
+  .brand { display: flex; align-items: center; text-decoration: none; }
+  .brand img { height: 40px; width: auto; display: block; }
+  .count { color: var(--soft); font-size: 14px; font-weight: 600; white-space: nowrap; }
+  @media (max-width: 420px) { .brand img { height: 32px; } .count { font-size: 13px; } }
+  @media (max-width: 350px) { .count { display: none; } }
 
   .lead { margin: 18px 0 22px; }
-  .lead h1 { margin: 0; font-size: clamp(30px, 7vw, 46px); line-height: 1.05; letter-spacing: -.03em; font-weight: 900; }
+  .lead h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(32px, 7.5vw, 50px); line-height: 1.05; }
   .lead p { margin: 8px 0 0; color: var(--soft); font-size: 17px; }
 
   .hero { display: grid; grid-template-columns: 1fr; background: var(--card); border-radius: 26px; overflow: hidden; box-shadow: var(--shadow); text-decoration: none; }
@@ -46,12 +51,12 @@
   .hero .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .hero .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 6px; }
   .kicker { font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-  .hero h2 { margin: 0; font-size: 34px; line-height: 1.05; letter-spacing: -.02em; font-weight: 900; }
+  .hero h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 38px; line-height: 1.05; }
   .hero p { margin: 0; color: var(--soft); font-size: 17px; }
   .play {
     margin-top: 12px; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px;
-    background: var(--accent); color: #fff; font-weight: 900; font-size: 18px; padding: 12px 26px; border-radius: 999px;
-    box-shadow: 0 6px 0 #c9401f;
+    background: var(--yellow); color: #12332D; font-family: var(--display); font-size: 21px; padding: 11px 28px; border-radius: 999px;
+    box-shadow: 0 6px 0 #D9AE1E;
   }
   .play svg { width: 16px; height: 16px; }
   .hero:hover .play, .hero:focus-visible .play { transform: translateY(-1px); }
@@ -63,7 +68,7 @@
     .hero h2 { font-size: 48px; }
   }
 
-  h3 { margin: 40px 0 14px; font-size: 20px; letter-spacing: -.01em; }
+  h3 { margin: 40px 0 14px; font-family: var(--display); font-weight: 400; font-size: 24px; }
   .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   @media (min-width: 720px) { .grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 18px; } }
   .card { background: var(--card); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); text-decoration: none; display: flex; flex-direction: column; transition: transform .15s ease; }
@@ -86,7 +91,7 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <a class="brand" href="./"><img src="icon.png" alt="">lulucard daily</a>
+    <a class="brand" href="../" aria-label="Banana Peel Games home"><picture><source srcset="brand/logo-on-dark.png" media="(prefers-color-scheme: dark)"><img src="brand/logo.png" alt="Banana Peel Games"></picture></a>
     <span class="count" id="count"></span>
   </header>
 
@@ -107,7 +112,7 @@
   </section>
 
   <footer>
-    Made by <a href="../">lulucard games</a> · <a href="privacy.html">Privacy</a> · <a href="mailto:support@lulucard.me">support@lulucard.me</a>
+    Made by <a href="../">Banana Peel Games</a> · <a href="privacy.html">Privacy</a> · <a href="mailto:support@lulucard.me">support@lulucard.me</a>
   </footer>
 </div>
 <script src="a.js"></script>
