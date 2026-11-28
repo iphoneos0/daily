@@ -338,7 +338,6 @@
   function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function buildUI() {
     const root = el('div', 'k-ui');
-    const home = el('a', 'k-btn k-home', ICON.back + '<span>More games</span>'); home.href = '../';
     const mute = el('button', 'k-btn k-mute'); mute.type = 'button'; mute.setAttribute('aria-label', 'Sound');
     const setMuteIcon = () => { mute.innerHTML = sound.muted ? ICON.off : ICON.on; };
     setMuteIcon();
@@ -358,13 +357,11 @@
     const row = el('div', 'k-row');
     const share = el('button', 'k-btn k-pill', 'Share'); share.type = 'button';
     share.addEventListener('click', () => doShare(share));
-    const more = el('a', 'k-btn k-pill', 'More games'); more.href = '../';
-    more.addEventListener('click', () => track('more_games', { from: 'over' }));
-    home.addEventListener('click', () => track('more_games', { from: 'corner' }));
-    row.append(share, more);
+    // 2026-11-29：回首页、看别的游戏交给网站的游戏页（/play/<slug>/ 顶栏和下面的 More games），游戏里不放
+    row.append(share);
     over.append(overTitle, score, bestEl, overLine, again, row);
 
-    root.append(home, mute, title, over);
+    root.append(mute, title, over);
     document.body.append(root);
     ui = { root, title, over, overTitle, score, best: bestEl, overLine, bestLine, ctaWrap };
     placeCta();

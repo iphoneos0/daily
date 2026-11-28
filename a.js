@@ -15,7 +15,8 @@
   window.gtag('consent', 'default', Object.assign({ analytics_storage: 'denied', region: EU }, deny));
   window.gtag('consent', 'default', Object.assign({ analytics_storage: 'granted' }, deny));
   window.gtag('js', new Date());
-  window.gtag('config', ID, { allow_google_signals: false });
+  // 游戏装在网站游戏页（/play/<slug>/）的 iframe 里时，外面那页已经记了一次浏览，里面不再记（游戏里的事件照记）
+  window.gtag('config', ID, { allow_google_signals: false, send_page_view: window.top === window });
   var s = document.createElement('script');
   s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID;
   document.head.appendChild(s);

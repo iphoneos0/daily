@@ -96,6 +96,7 @@
 
   // ---------- 布局 ----------
   let L = {}, safeProbe = null;
+  const BTN = 40;   // 顶栏圆按钮的大小
   function layout() {
     const dpr = Math.min(3, window.devicePixelRatio || 1);
     const vw = window.innerWidth, vh = window.innerHeight;
@@ -122,7 +123,8 @@
     const sw = Math.min(gameW - 12, jw + 40) / 3, sx = (vw - sw * 3) / 2;
     L = { vw, vh, top: sat, bot: sab, cs, gp: cs / CELL, jx, jy, jw, jh, rimY: jy + HEAD * cs, trayY, trayH,
       slots: [0, 1, 2].map(i => ({ x: sx + sw * i, y: trayY, w: sw, h: trayH })),
-      snd: { x: (vw + gameW) / 2 - 46, y: 14 + sat, w: 36, h: 36 } };
+      // 声音按钮跟瓶子右边对齐、跟中间的分数一样高（2026-11-28：原来贴着屏幕右边，左上角的颜色点却贴着瓶子边，两边不对称）
+      snd: { x: jx + jw - BTN, y: sat + 10, w: BTN, h: BTN } };
   }
 
   // ---------- 一局 ----------
@@ -219,12 +221,7 @@
     log.push(r);
     store.set('sand1-log', JSON.stringify(log.slice(-100)));
   }
-  // 每日一游里结果卡片多一个「More games」回首页（只有 window.SAND_SITE === 'daily' 时显示）
-  if (window.SAND_SITE === 'daily') {
-    const more = document.getElementById('more');
-    more.classList.remove('hide');
-    more.addEventListener('click', () => track('more_games', { from: 'over' }));
-  }
+  // 2026-11-29：结果卡片上的「More games」不再显示。网站上回首页、看别的游戏交给游戏页（/play/sandjar/）的顶栏和下面的游戏列表
   // 两局之间的插屏（docs/02 第六节：玩的时候绝不放；从第 4 局起，点了「再来一瓶」以后放，至少隔 3 分钟）。
   // 网页里由每日一游的 ads.js 提供 window.webAds（谷歌 AdSense 的 H5 游戏广告）；App 壳以后接 AdMob；都没有就直接开下一局
   let adWait = false;
@@ -674,11 +671,11 @@
       outlined(kfmt(next), bx + bw + 7, by + bh, 12, 900, CREAM, COCOA, 3.5);
       ctx.textAlign = 'center';
     }
-    // 现在有几种颜色
-    const n = S.colorsAt(st.placed), d = 11;
+    // 现在有几种颜色：一排小圆点，放在进度条下面居中（原来在左上角，跟回主页按钮抢位置）
+    const n = S.colorsAt(st.placed), d = 9, dg = 5, dx0 = L.vw / 2 - (n * d + (n - 1) * dg) / 2 + d / 2;
     for (let c = 1; c <= n; c++) {
       ctx.fillStyle = COLORS[c]; ctx.strokeStyle = COCOA; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(L.jx + 8 + (c - 1) * (d + 5), L.top + 36, d / 2, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(dx0 + (c - 1) * (d + dg), L.top + 87, d / 2, 0, 7); ctx.fill(); ctx.stroke();
     }
     // 声音开关（录视频时不画）
     if (REC) return;
