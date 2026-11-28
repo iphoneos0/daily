@@ -3,6 +3,13 @@
 // controls / fun / hook 给以后选题用：避免连着几天同一种操作、同一种乐趣、同一种短视频看点
 window.GAMES = [
   {
+    no: 5, slug: 'candlerush', date: '2026-11-29', title: 'Candle Rush',
+    verb: "Tap to stick the candle. Don't hit another.", focus: '50% 40%',
+    controls: 'tap', fun: ['precision', 'rhythm'],
+    hook: 'a spinning cake bristling with lit candles speeds up, the last candle slides in, MAKE A WISH, every flame puffs out at once',
+    about: 'The birthday cake is spinning. Tap to stick a lit candle into its edge, but never hit a candle that is already there. Fill the cake, make a wish, and take on the next one. Each cake spins its own way.',   // 游戏页下面的介绍（网站 /play/<slug>/）
+  },
+  {
     // 也不是 kit 做的小游戏：环球躲烟（~/Desktop/环球躲烟），App Store 上的 Hold Your Breath: Smoke Dash 的网页版。
     // site/hyb/ 由 tools/sync-hyb.sh 从环球躲烟的 main 导出，别在这里改；网页适配在 tools/hyb/web.js（不放广告、内购改成去 App Store）
     no: 4, slug: 'hyb', date: '2026-11-27', title: 'Hold Your Breath',
