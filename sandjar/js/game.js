@@ -816,6 +816,22 @@
   let vnow = 0;
   if (!REC) requestAnimationFrame(frame);
 
+  // 开屏（index.html 的 #splash）：从打开页面算起至少 1.2 秒，图片没加载完就等，最多 3 秒；点一下跳过。录视频模式直接拿掉
+  (function () {
+    const sp = document.getElementById('splash');
+    if (!sp) return;
+    if (REC) { sp.remove(); return; }
+    const hide = () => {
+      if (!sp.isConnected || sp.classList.contains('out')) return;
+      sp.classList.add('out');
+      setTimeout(() => sp.remove(), 500);
+    };
+    const soon = () => setTimeout(hide, Math.max(0, 1200 - performance.now()));
+    if (document.readyState === 'complete') soon(); else window.addEventListener('load', soon);
+    setTimeout(hide, 3000);
+    sp.addEventListener('pointerdown', hide);
+  })();
+
   // 调试用：面板藏起来时动画帧不走，用 SAND.tick(n) 推进
   window.SAND = {
     sim: S,

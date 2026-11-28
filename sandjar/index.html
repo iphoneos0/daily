@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#5E4A86">
 <title>Sand Jar · Banana Peel Games</title>
-<meta name="build" content="d96a384">
+<meta name="build" content="2f27710">
 <meta name="description" content="Drop the blocks. Join colors wall to wall. A free sand puzzle for your phone, tablet or computer.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sand Jar">
@@ -45,9 +45,16 @@
   #over .more { font: 800 13px ui-rounded, "SF Pro Rounded", system-ui, sans-serif; color: #7A4A2C; text-decoration: underline; }
   #logSum { font-size: 13px; color: #5B4A3A; margin: 6px 0 10px; }
   #logTxt { width: 78vw; max-width: 520px; height: 46vh; font: 11px ui-monospace, monospace; }
+  /* 开屏（2026-11-28，每日一游 docs/05「游戏里怎么放标志」，你选了 B）：用这款游戏自己的日落背景，压暗、模糊，
+     中间是 Banana Peel Games 的标志。一打开就盖住，一秒多后淡出进游戏；点一下可以跳过。玩的时候和结束画面不放标志 */
+  #splash { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #3B2F4C; transition: opacity .45s ease; }
+  #splash::before { content: ""; position: absolute; inset: -40px; background: url(img/bg_sky.jpg) center / cover; filter: blur(10px) brightness(.62); }
+  #splash img { position: relative; width: min(46vw, 230px); height: auto; margin-top: -4vh; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .35)); }
+  #splash.out { opacity: 0; pointer-events: none; }
 </style>
 </head>
 <body>
+<div id="splash"><img src="img/brand-splash.png" alt="Banana Peel Games"></div>
 <canvas id="cv"></canvas>
 <div id="over" class="ov hide"><div class="card">
   <div><h2>The jar is full</h2>
